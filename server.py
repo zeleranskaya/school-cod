@@ -1,11 +1,15 @@
-from flask import Flask, render_template, request
+"""
 
+"""
+
+from flask import Flask, render_template, request
+import time
 server = Flask(__name__)
 # Добавить словарь messages
 messages = [
-    {'username': 'dim-akim', 'text': 'Здравствуйте!'},
-    {'username': 'fomin-k', 'text': 'Добрый день!'},
-    {'username': 'kaleda-s', 'text': 'И вам не хворать!'}
+    {'username': 'zelerasha', 'text': 'hi!', "timestamp": time.time()},
+    {'username': 'fomin-k', 'text': 'bye)', "timestamp": time.time()},
+    {'username': 'kaleda-s', 'text': 'you are welcome...', "timestamp": time.time()}
 ]
 
 
@@ -20,14 +24,33 @@ def hello():  # функция представления
 # Нужна библиотека requests
 @server.route('/get_messages')
 def get_messages():
-    return {
-        'messages': messages
+    after = float(request.args['after'])
+
+    result = []
+    for message in messages:
+        if message['timestamp'] > after:
+            result.append(message)
+    return{
+        'messages': result
     }
+
+# отправка сообщений на бесконечный цикл
+@server.route('/send_messages')
+def send_message():
+
+    messages.append(
+         {
+             'username': request.json['username'],
+             'text': request.json['text'],
+             'timestamp': time.time()
+         }
+     )
 
 
 @server.route('/index')
 def index():  # функция представления
-    name = 'Дмитрий Валерьевич'
+    name = 'Зелеранская Ярослава' \
+           ''
     return render_template('index.html')
 
 
